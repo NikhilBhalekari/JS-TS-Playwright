@@ -81,7 +81,7 @@ if (score > 100 || score < 0) {
     else if (score > 60 && score <= 70) {
         console.log("Grade D - Average");
     }
-    else if (score > 50 && score <= 60) {
+    else if (score >= 50 && score <= 60) {
         console.log("Grade E - Needs Improvement");
     }
     else {

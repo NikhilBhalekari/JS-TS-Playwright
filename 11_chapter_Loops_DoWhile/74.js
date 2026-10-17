@@ -5,5 +5,3 @@ do {
     console.log("Retrying.....",retry);
     retry++;
 } while (retry < 3);
-
-

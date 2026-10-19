@@ -77,6 +77,14 @@ A chapter-by-chapter learning repo for testers moving into JavaScript, TypeScrip
   - [74: do...while](#74-dowhile)
   - [75: while vs do...while](#75-while-vs-dowhile)
   - [76: Nested Loops](#76-nested-loops)
+- [Chapter 12: Arrays](#chapter-12-arrays)
+  - [78: Arrays: Index, length and at()](#78-arrays-index-length-and-at)
+  - [82: Creating Arrays](#82-creating-arrays)
+  - [83: Accessing and Modifying](#83-accessing-and-modifying)
+  - [84: Adding and Removing Items](#84-adding-and-removing-items)
+  - [86: Searching: indexOf, includes and find](#86-searching-indexof-includes-and-find)
+  - [88: Iterating Over an Array](#88-iterating-over-an-array)
+  - [89: Transforming: map and filter](#89-transforming-map-and-filter)
 - [Coming Up](#coming-up)
 
 ---
@@ -95,8 +103,9 @@ flowchart LR
     C7 --> C8["08 User Input<br/>prompt, readline, prompt-sync, stdin"]:::done
     C8 --> C9["09 for Loop<br/>init, condition, update"]:::done
     C9 --> C10["10 while Loop<br/>while, while (true) + break"]:::done
-    C10 --> C11["11 do...while<br/>run once, nested loops"]:::progress
-    C11 --> TS["TypeScript"]:::planned
+    C10 --> C11["11 do...while<br/>run once, nested loops"]:::done
+    C11 --> C12["12 Arrays<br/>push/pop, find, map, filter"]:::progress
+    C12 --> TS["TypeScript"]:::planned
     TS --> PW["Playwright"]:::planned
 
     classDef done fill:#d1fae5,stroke:#059669,color:#064e3b
@@ -121,7 +130,8 @@ flowchart LR
 | 08 | User Input | [08_chapter_UserInput](08_chapter_UserInput/) | ✅ Done | `prompt()` in the browser, `readline`, `prompt-sync`, reading stdin with `fs` |
 | 09 | for Loop | [09_chapter_Loops](09_chapter_Loops/) | ✅ Done | Why loops, `for (init; condition; update)`, `<` vs `<=`, zero-run and infinite loops, `if` inside a loop |
 | 10 | while Loop | [10_chapter_Loops_WHILE](10_chapter_Loops_WHILE/) | ✅ Done | `while`, retry counters, `while (true)` with `break` |
-| 11 | do...while and Nested Loops | [11_chapter_Loops_DoWhile](11_chapter_Loops_DoWhile/) | 🟡 In progress | `do...while`, `while` vs `do...while`, nested `for` loops |
+| 11 | do...while and Nested Loops | [11_chapter_Loops_DoWhile](11_chapter_Loops_DoWhile/) | ✅ Done | `do...while`, `while` vs `do...while`, nested `for` loops |
+| 12 | Arrays | [12_chapters_Arrays](12_chapters_Arrays/) | 🟡 In progress | Index, `length`, `at()`, creating arrays, `push`/`pop`/`shift`/`unshift`/`splice`, `indexOf`/`includes`/`find`, `for...of`/`forEach`, `map`/`filter` |
 
 ---
 
@@ -224,11 +234,24 @@ LearnJSTSPlaywright4x/
 │   ├── 71_IQ.js                            # Retry counter: 3 attempts
 │   ├── 72.js                               # Count 1 to 15 with while
 │   └── 73_break.IQ.js                      # while (true) stopped by break
-└── 11_chapter_Loops_DoWhile/
-    ├── 74.js                               # do...while retry: body first, check after
-    ├── 75_IQ.js                            # do...while runs once even when the condition is false
-    ├── 76_Nested.js                        # Nested for loops: a 3 x 3 grid
-    └── 77_IQ.js                            # for loop false at the start: 0 runs
+├── 11_chapter_Loops_DoWhile/
+│   ├── 74.js                               # do...while retry: body first, check after
+│   ├── 75_IQ.js                            # do...while runs once even when the condition is false
+│   ├── 76_Nested.js                        # Nested for loops: a 3 x 3 grid
+│   └── 77_IQ.js                            # for loop false at the start: 0 runs
+└── 12_chapters_Arrays/
+    ├── 78_Array.js                         # Index, at(-1), length
+    ├── 79_Arrays.js                        # typeof [] is "object", [-1] vs at(-1)
+    ├── 80_Arrays.js                        # Out-of-range index gives undefined
+    ├── 81_Array.js                         # Arrays can mix types
+    ├── 82_Create.js                        # Literal, new Array, Array.of, Array.from
+    ├── 83_Access_Modify.js                 # Read and change items by index
+    ├── 84_Adding_Remove.js                 # push, pop, unshift, shift, splice
+    ├── 85_ARRAY.js                         # pop, shift, then loop and check each item
+    ├── 86_Searching.js                     # indexOf, lastIndexOf, includes
+    ├── 87_Find.js                          # find, findIndex, findLast, findLastIndex
+    ├── 88_Iterate.js                       # for, for...of, forEach, entries(), for...in
+    └── 89_Arrays_Transform.js              # map and filter
 ```
 
 ---
@@ -2309,7 +2332,304 @@ for (let i = 0; i < 3; i++) {
 
 ---
 
+## Chapter 12: Arrays
+
+### 78: Arrays: Index, length and at()
+
+**Concept:** An array is an ordered list of values in square brackets: `["chrome", "firefox", "webkit"]`. Items are numbered from 0, `length` says how many there are, and `at(-1)` counts from the end.
+
+**Why:** Test data is full of lists (browsers to run on, rows in a table, expected error messages), and an array holds a whole list in one variable.
+
+**Q&A: why use this?**
+- **Q: When do I reach for it?** A: Any group of related values. `["chrome", "firefox", "webkit"]` is exactly the set of browsers Playwright runs tests on.
+- **Q: What does it replace?** A: Separate variables (`browser1`, `browser2`, ...) and Java arrays. Unlike Java, a JavaScript array has no fixed size and can mix types: `[1, "hello", true, null]` in `81_Array.js`.
+- **Q: What's the gotcha?** A: Brackets do not count from the end: `browsers[-1]` is `undefined`, not the last item; use `browsers.at(-1)`. Reading past the end (`arr[4]` on a 4-item array) also gives `undefined`, with no error. And `typeof []` is `"object"`, so check with `Array.isArray()`.
+
+```mermaid
+flowchart LR
+    subgraph ARR["browsers, length 3"]
+        A0["[0] chrome<br/>at(-3)"] --- A1["[1] firefox<br/>at(-2)"] --- A2["[2] webkit<br/>at(-1)"]
+    end
+```
+
+```js
+// 12_chapters_Arrays/78_Array.js
+const browsers = ["chrome", "firefox", "webkit"];
+console.log(browsers[0]);          // chrome
+console.log(browsers.at(-1));      // webkit  (negative index)
+console.log(browsers.length);      // 3
+
+// 79_Arrays.js and 80_Arrays.js
+console.log(typeof []);            // object
+console.log(browsers[-1]);         // undefined: brackets don't count from the end
+let arr = [10, 20, 30, 40];
+console.log(arr[4]);               // undefined: index 4 is past the end
+```
+
+### 82: Creating Arrays
+
+**Concept:** The literal `[...]` is the everyday way to make an array. `new Array(...)`, `Array.of(...)` and `Array.from(...)` exist for special cases.
+
+**Why:** You will meet all four in other people's code, and one of them has a trap.
+
+**Q&A: why use this?**
+- **Q: When do I reach for it?** A: `[]` almost always. `Array.from("hello")` splits a string (or anything iterable) into an array, and `Array.from({ length: 3 }, (_, i) => i)` builds `[0, 1, 2]`.
+- **Q: What does it replace?** A: Java's `new String[3]` and `Arrays.asList(...)`.
+- **Q: What's the gotcha?** A: `new Array(3)` does not make `[3]`. A single number means "length", so you get three empty slots (`[ <3 empty items> ]`). With several numbers, `new Array(1, 2, 3)` does make `[1, 2, 3]`. `Array.of(3)` always means `[3]`.
+
+```mermaid
+flowchart TD
+    Q{"What are you starting from?"} -->|"values you already know"| L["[1, 2, 3]<br/>(literal)"]
+    Q -->|"a string or other iterable"| F["Array.from('hello')"]
+    Q -->|"one number, as a value"| O["Array.of(3)"]
+    Q -->|"a number of empty slots"| N["new Array(3)"]:::warn
+
+    classDef warn fill:#fef3c7,stroke:#d97706,color:#78350f
+```
+
+| Code | Result |
+|:-----|:-------|
+| `["Chrome", "Firefox", "Safari"]` | `["Chrome", "Firefox", "Safari"]` |
+| `new Array(3)` | `[ <3 empty items> ]`, length 3 |
+| `new Array(1, 2, 3)` | `[1, 2, 3]` |
+| `Array.of(3)` | `[3]` |
+| `Array.of(10, 20, 30, 40, 50)` | `[10, 20, 30, 40, 50]` |
+| `Array.from("hello")` | `["h", "e", "l", "l", "o"]` |
+
+```js
+// 12_chapters_Arrays/82_Create.js (with console.log added)
+let browsers = ["Chrome", "Firefox", "Safari"];
+
+let scores = new Array(3);          // [ <3 empty items> ]
+scores[0] = "1";
+console.log(scores);                // [ '1', <2 empty items> ]
+
+let scores2 = new Array(1, 2, 3);   // [1, 2, 3]
+let test = Array.of(10, 20, 30, 40, 50);
+console.log(test.length);           // 5
+
+let chars = Array.from("hello");
+console.log(chars);                 // [ 'h', 'e', 'l', 'l', 'o' ]
+```
+
+### 83: Accessing and Modifying
+
+**Concept:** Read an item with `arr[i]` (or `arr.at(i)`), and change it by assigning to the same index: `statuses[1] = "blocked"`.
+
+**Why:** Updating one entry in a list, such as a test status or a cell value, is everyday work.
+
+**Q&A: why use this?**
+- **Q: When do I reach for it?** A: When you know the position. `at(-1)` and `at(-2)` read from the end without working out `length - 1`.
+- **Q: What does it replace?** A: `statuses[statuses.length - 1]` for the last item.
+- **Q: What's the gotcha?** A: `const` does not freeze an array. With `const statuses = [...]`, `statuses[1] = "blocked"` works; only reassigning (`statuses = []`) throws. And `at(-4)` on a 3-item array is `undefined`, not an error.
+
+```mermaid
+flowchart LR
+    B["['pass', 'fail', 'skip']"] -->|"statuses[1] = 'blocked'"| A["['pass', 'blocked', 'skip']"]
+    A --> L["length is still 3"]
+```
+
+```js
+// 12_chapters_Arrays/83_Access_Modify.js
+let statuses = ["pass", "fail", "skip"];
+
+console.log(statuses[0]);        // pass
+console.log(statuses[2]);        // skip
+
+console.log(statuses.at(-1));    // skip
+console.log(statuses.at(-2));    // fail
+console.log(statuses.at(-4));    // undefined
+
+// Modify
+statuses[1] = "blocked";
+console.log(statuses);           // [ 'pass', 'blocked', 'skip' ]
+console.log(statuses.length);    // 3
+```
+
+### 84: Adding and Removing Items
+
+![Add and remove items: unshift adds to the start, shift removes from the start, push adds to the end, pop removes from the end, splice adds or removes anywhere](assets/images/ch12-array-add-remove.png)
+
+**Concept:** `push` and `pop` add and remove at the end, `unshift` and `shift` add and remove at the start, and `splice(start, deleteCount, ...items)` removes and/or inserts anywhere. All five change the original array.
+
+**Why:** Test data changes while a test runs: queue up pages to visit, drop a browser that is not supported, insert an extra step.
+
+**Q&A: why use this?**
+- **Q: When do I reach for it?** A: `push` and `pop` for most list building, `shift` to take the next item from a queue, `splice` for anything in the middle.
+- **Q: What does it replace?** A: Java's `ArrayList` methods `add(item)`, `remove(index)` and `add(index, item)`.
+- **Q: What's the gotcha?** A: Watch the return values. `push` and `unshift` return the new length, not the array; `pop` and `shift` return the removed item (`85_ARRAY.js` keeps `browser.shift()` as `removed`); `splice` returns an array of what it removed. All of them change the array in place.
+
+```mermaid
+flowchart LR
+    A["[1, 2, 3, 5, 6]"] -->|"splice(2, 1)<br/>remove 1 at index 2"| B["[1, 2, 5, 6]"]
+    B -->|"splice(2, 0, 99)<br/>insert at index 2"| C["[1, 2, 99, 5, 6]"]
+    C -->|"splice(1, 2, 10, 20)<br/>replace 2 from index 1"| D["[1, 10, 20, 5, 6]"]
+```
+
+| Method | Where | Returns | On `[1, 2, 3]` |
+|:-------|:------|:--------|:---------------|
+| `push(4)` | End, add | New length (`4`) | `[1, 2, 3, 4]` |
+| `pop()` | End, remove | Removed item (`3`) | `[1, 2]` |
+| `unshift(0)` | Start, add | New length (`4`) | `[0, 1, 2, 3]` |
+| `shift()` | Start, remove | Removed item (`1`) | `[2, 3]` |
+| `splice(1, 1)` | Anywhere | Removed items (`[2]`) | `[1, 3]` |
+| `splice(1, 0, 99)` | Anywhere | `[]` | `[1, 99, 2, 3]` |
+
+```js
+// 12_chapters_Arrays/84_Adding_Remove.js (excerpt)
+let arr = [1, 2, 3];
+
+arr.push(4);              // add to END              [1, 2, 3, 4]
+arr.pop();                // remove from END         [1, 2, 3]
+arr.push(5, 6);           //                         [1, 2, 3, 5, 6]
+arr.unshift(0);           // add to BEGINNING        [0, 1, 2, 3, 5, 6]
+arr.shift();              // remove from BEGINNING   [1, 2, 3, 5, 6]
+
+arr.splice(2, 1);         // remove 1 item at index 2       [1, 2, 5, 6]
+arr.splice(2, 0, 99);     // insert 99 at index 2           [1, 2, 99, 5, 6]
+arr.splice(1, 2, 10, 20); // replace 2 items from index 1   [1, 10, 20, 5, 6]
+console.log(arr);         // [ 1, 10, 20, 5, 6 ]
+```
+
+`85_ARRAY.js` combines these: it pops and shifts a browser list, then loops over what is left and flags `"opera"`.
+
+### 86: Searching: indexOf, includes and find
+
+**Concept:** `indexOf` and `lastIndexOf` return the position of a value (or `-1`), and `includes` answers yes or no. `find` and `findIndex` search with a rule instead of an exact value: `n => n > 20` is a short arrow function that takes an item and returns `true` or `false`.
+
+**Why:** Assertions often ask "is this value in the list?" or "which row matches?", and these methods answer without a hand-written loop.
+
+**Q&A: why use this?**
+- **Q: When do I reach for it?** A: `includes` for yes/no checks (`results.includes("error")`), `indexOf` when you need the position, `find` when the match is a rule (`n > 20`) rather than a fixed value. `findLast` and `findLastIndex` search from the end.
+- **Q: What does it replace?** A: A `for` loop with a flag variable and a `break`.
+- **Q: What's the gotcha?** A: Each method says "not found" differently: `indexOf` and `findIndex` return `-1`, `find` returns `undefined`. So never write `if (results.indexOf("fail"))`: a match at position 0 is falsy and a miss (`-1`) is truthy. Also, `indexOf` cannot find `NaN`, but `includes` can.
+
+```mermaid
+flowchart TD
+    Q{"What do you need?"} -->|"yes or no"| I["includes(value)"]
+    Q -->|"position of a value"| X["indexOf / lastIndexOf"]
+    Q -->|"first item matching a rule"| F["find / findIndex"]
+    Q -->|"last item matching a rule"| FL["findLast / findLastIndex"]
+```
+
+| Method | Looks for | Found | Not found |
+|:-------|:----------|:------|:----------|
+| `indexOf(v)` | Exact value, from the start | First index | `-1` |
+| `lastIndexOf(v)` | Exact value, from the end | Last index | `-1` |
+| `includes(v)` | Exact value | `true` | `false` |
+| `find(fn)` | First item where `fn` is true | The item | `undefined` |
+| `findIndex(fn)` | First item where `fn` is true | Its index | `-1` |
+| `findLast(fn)`, `findLastIndex(fn)` | Same, from the end | Item, index | `undefined`, `-1` |
+
+```js
+// 12_chapters_Arrays/86_Searching.js (with console.log added)
+let results = ["pass", "fail", "pass", "error", "fail"];
+console.log(results.indexOf("fail"));       // 1
+console.log(results.indexOf("skip"));       // -1
+console.log(results.lastIndexOf("fail"));   // 4 (searches from the end)
+console.log(results.includes("error"));     // true
+
+// 12_chapters_Arrays/87_Find.js
+let nums = [10, 25, 30, 45];
+console.log(nums.find(temp => temp > 20));      // 25
+console.log(nums.findIndex(n => n > 20));       // 1
+console.log(nums.findLast(n => n > 20));        // 45
+console.log(nums.findLastIndex(n => n > 20));   // 3
+```
+
+### 88: Iterating Over an Array
+
+**Concept:** Five ways to walk through an array: a classic `for` loop with an index, `for...of` for the values, `forEach` with a callback, `for...of` over `entries()` for index and value together, and `for...in`, which gives the indexes.
+
+**Why:** Checking every row, every link or every result is the most common thing a test does with a list.
+
+**Q&A: why use this?**
+- **Q: When do I reach for it?** A: `for...of` by default (cleanest for values); the classic `for` when you need the index or want to skip around; `entries()` when you want both.
+- **Q: What does it replace?** A: Java's enhanced `for (String t : tests)`, which is JavaScript's `for...of`.
+- **Q: What's the gotcha?** A: `for...in` gives the index as a string (`"0"`, `"1"`), not the value, and is meant for objects; use `for...of` for arrays. And `forEach` cannot be stopped with `break` and does not wait for `await`, which matters in Playwright tests: use `for...of` with `await` inside.
+
+```mermaid
+flowchart LR
+    A["tests = ['login', 'checkout', 'search']"] --> F1["for...of<br/>'login', 'checkout', 'search'"]
+    A --> F2["for...in<br/>'0', '1', '2' (strings)"]
+    A --> F3["entries()<br/>[0, 'login'], [1, 'checkout'], ..."]
+```
+
+| Loop | Gives you | `break` works? |
+|:-----|:----------|:--------------:|
+| `for (let i = 0; i < a.length; i++)` | Index (then `a[i]`) | ✅ |
+| `for (const v of a)` | Value | ✅ |
+| `a.forEach((v, i) => ...)` | Value and index | ❌ |
+| `for (const [i, v] of a.entries())` | Index and value | ✅ |
+| `for (const i in a)` | Index, as a string | ✅ (avoid for arrays) |
+
+```js
+// 12_chapters_Arrays/88_Iterate.js (excerpt)
+let tests = ["login", "checkout", "search"];
+
+for (let i = 0; i < tests.length; i++) {
+    console.log(i, tests[i]);            // 0 login, 1 checkout, 2 search
+}
+
+for (let test of tests) {
+    console.log(test);                   // login, checkout, search
+}
+
+tests.forEach((test, index) => {
+    console.log(`${index}: ${test}`);    // 0: login, 1: checkout, 2: search
+});
+
+for (let [i, test] of tests.entries()) {
+    console.log(i, test);                // 0 login, 1 checkout, 2 search
+}
+
+let students = ["methis", "senthil", "ajay", "rahul"];
+for (let student in students) {
+    console.log(student, " -> ", students[student]);   // 0 -> methis, ...
+}
+```
+
+### 89: Transforming: map and filter
+
+![map vs filter: map turns 45, 82, 91, 60, 73 into Fail, Pass, Pass, Fail, Pass; filter keeps only 82, 91, 73; both return a new array](assets/images/ch12-map-vs-filter.png)
+
+**Concept:** `map` builds a new array by transforming every item; `filter` builds a new array that keeps only the items that pass a test. Neither changes the original array.
+
+**Why:** Turning raw data into what you assert on (scores into Pass/Fail, all rows into the failing ones) becomes a one-liner instead of a loop.
+
+**Q&A: why use this?**
+- **Q: When do I reach for it?** A: `map` when you need one output per input (labels, prices with tax, the text of every row); `filter` when you need a subset (failed tests, visible items).
+- **Q: What does it replace?** A: A `for` loop that pushes into a new array, and Java's `stream().map(...)` and `stream().filter(...)`.
+- **Q: What's the gotcha?** A: Keep the rules in sync. `89_Arrays_Transform.js` uses `> 70` in `map` but `>= 70` in `filter`, so a score of exactly 70 would be labelled "Fail" by one and counted as passing by the other.
+
+```mermaid
+flowchart LR
+    S["scores<br/>[45, 82, 91, 60, 73]"] -->|"map(i => i > 70 ? 'Pass' : 'Fail')"| G["['Fail', 'Pass', 'Pass', 'Fail', 'Pass']"]
+    S -->|"filter(s => s >= 70)"| P["[82, 91, 73]"]
+```
+
+| | `map` | `filter` |
+|:--|:--|:--|
+| Output length | Same as the input | Same or shorter |
+| Output items | New values | Original items that passed |
+| Callback returns | The new value | `true` (keep) or `false` (drop) |
+
+```js
+// 12_chapters_Arrays/89_Arrays_Transform.js (plus a check on the original)
+let scores = [45, 82, 91, 60, 73];
+
+let grades = scores.map(i => i > 70 ? "Pass" : "Fail");
+console.log(grades);    // [ 'Fail', 'Pass', 'Pass', 'Fail', 'Pass' ]
+
+let passing = scores.filter(s => s >= 70);
+console.log(passing);   // [ 82, 91, 73 ]
+
+console.log(scores);    // [ 45, 82, 91, 60, 73 ] (unchanged)
+```
+
+---
+
 ## Coming Up
 
-- **Chapter 11: do...while and Nested Loops** continues.
+- **Chapter 12: Arrays** continues.
 - Then TypeScript, then Playwright.

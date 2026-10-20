@@ -1,23 +1,24 @@
 JavaScript / TypeScript Keywords
+
 # JavaScript / TypeScript Keywords
 
 ## 1. Control-flow keywords
 
 These control the execution flow of your program.
 
-| Keyword | Purpose |
-| --- | --- |
-| `if` | Execute code when a condition is true |
-| `else` | Execute alternative code |
-| `switch` | Choose between multiple cases |
-| `case` | Define a switch option |
-| `default` | Default switch option |
-| `break` | Exit a loop or switch |
-| `continue` | Skip the current loop iteration |
-| `for` | Repeat code |
-| `while` | Repeat while a condition is true |
-| `do` | Execute the loop body at least once |
-| `return` | Return a value from a function |
+| Keyword    | Purpose                               |
+| ---------- | ------------------------------------- |
+| `if`       | Execute code when a condition is true |
+| `else`     | Execute alternative code              |
+| `switch`   | Choose between multiple cases         |
+| `case`     | Define a switch option                |
+| `default`  | Default switch option                 |
+| `break`    | Exit a loop or switch                 |
+| `continue` | Skip the current loop iteration       |
+| `for`      | Repeat code                           |
+| `while`    | Repeat while a condition is true      |
+| `do`       | Execute the loop body at least once   |
+| `return`   | Return a value from a function        |
 
 ### `if`
 

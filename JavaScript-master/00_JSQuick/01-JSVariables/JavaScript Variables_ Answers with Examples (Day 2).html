@@ -1,0 +1,182 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name=claude:viewport-fit-sides content=cover><style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-right:env(safe-area-inset-right,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}</style><style>.md-table{overflow-x:auto}@media print{.md-table{overflow-x:visible}}</style><style>:root{color-scheme:light dark;--md-bg:#fff;--md-text:rgba(0,0,0,.8);--md-muted:rgba(0,0,0,.6);--md-fill:rgba(0,0,0,.04);--md-fill-strong:rgba(0,0,0,.06);--md-rule:rgba(0,0,0,.1);--md-rule-strong:rgba(0,0,0,.16);--md-link:hsl(210 100% 45%)}@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){--md-bg:#0d0d0d;--md-text:rgba(255,255,255,.85);--md-muted:rgba(255,255,255,.6);--md-fill:rgba(255,255,255,.06);--md-fill-strong:rgba(255,255,255,.09);--md-rule:rgba(255,255,255,.14);--md-rule-strong:rgba(255,255,255,.22);--md-link:hsl(210 100% 72%)}}:root[data-theme="dark"]{color-scheme:dark;--md-bg:#0d0d0d;--md-text:rgba(255,255,255,.85);--md-muted:rgba(255,255,255,.6);--md-fill:rgba(255,255,255,.06);--md-fill-strong:rgba(255,255,255,.09);--md-rule:rgba(255,255,255,.14);--md-rule-strong:rgba(255,255,255,.22);--md-link:hsl(210 100% 72%)}:root[data-theme="light"]{color-scheme:light}@media print{:root,:root[data-theme="dark"]{color-scheme:light;--md-bg:#fff;--md-text:rgba(0,0,0,.8);--md-muted:rgba(0,0,0,.6);--md-fill:rgba(0,0,0,.04);--md-fill-strong:rgba(0,0,0,.06);--md-rule:rgba(0,0,0,.1);--md-rule-strong:rgba(0,0,0,.16);--md-link:hsl(210 100% 45%)}}body{background:var(--md-bg);color:var(--md-text);max-width:720px;margin:0 auto;padding:32px;display:flex;flex-direction:column;gap:10px;font:14px/1.55 -apple-system,BlinkMacSystemFont,'SF Pro','Segoe UI',sans-serif;overflow-wrap:break-word}body>:first-child{margin-top:0}h1,h2,h3,h4,h5,h6{margin:6px 0 0;line-height:1.25;font-weight:600;text-wrap:balance}h1{font-size:1.35em}h2{font-size:1.15em;color:var(--md-muted)}h3,h4,h5,h6{font-size:1em}p,ul,ol,blockquote,table,pre,hr{margin:0}strong{font-weight:600}a{color:var(--md-link);text-decoration:none}a:hover{text-decoration:underline}ul,ol{display:flex;flex-direction:column;gap:6px;padding-left:22px}ul{list-style:disc}ol{list-style:decimal}:is(li,td,th)>*+:is(p,ul,ol,blockquote){margin-top:6px}blockquote{display:flex;flex-direction:column;gap:10px;border-left:2px solid var(--md-rule);padding-left:10px;color:var(--md-muted)}:not(pre)>code{background:var(--md-fill);padding:1px 3px;border-radius:4px;font:.92em 'SF Mono',ui-monospace,Menlo,Consolas,monospace}a>code{background:none;color:inherit}pre{background:var(--md-fill);padding:10px 12px;border-radius:6px;overflow-x:auto;font:12px/1.5 'SF Mono',ui-monospace,Menlo,Consolas,monospace;margin-block:4px}pre code{background:none;padding:0;font:inherit}table{width:100%;border-collapse:separate;border-spacing:2px;font:inherit}th,td{padding:6px 8px;border-radius:3px;text-align:left;vertical-align:top}th{background:var(--md-fill-strong);font-weight:600}td{background:var(--md-fill)}:is(th,td) :not(pre)>code{background:transparent}hr{border:0;border-top:1px solid var(--md-rule-strong);margin-block:10px}img{max-width:100%;height:auto;border-radius:4px}</style>
+</head><body>
+<h1>JavaScript Variables: Answers with Examples (Day 2)</h1>
+<h2>Question 1: <code>var</code> vs <code>let</code> vs <code>const</code></h2>
+<div class="md-table" role="region" aria-label="Table" tabindex="0"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>var</code></th>
+<th><code>let</code></th>
+<th><code>const</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scope</td>
+<td>Function</td>
+<td>Block <code>{ }</code></td>
+<td>Block <code>{ }</code></td>
+</tr>
+<tr>
+<td>Re-declare in same scope</td>
+<td>Allowed</td>
+<td>Error</td>
+<td>Error</td>
+</tr>
+<tr>
+<td>Re-assign</td>
+<td>Allowed</td>
+<td>Allowed</td>
+<td>Error</td>
+</tr>
+<tr>
+<td>Hoisting</td>
+<td>Hoisted, value is <code>undefined</code></td>
+<td>Hoisted, but in the temporal dead zone</td>
+<td>Same as <code>let</code></td>
+</tr>
+<tr>
+<td>Must initialise at declaration</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-js">var a = 10;
+var a = 20;          // OK, re-declaration allowed
+console.log(a);      // 20
+
+let b = 10;
+// let b = 20;       // SyntaxError: &#39;b&#39; has already been declared
+b = 20;              // OK, re-assignment
+console.log(b);      // 20
+
+const c = 10;
+// c = 20;           // TypeError: Assignment to constant variable
+</code></pre>
+<p>Best practice: use <code>const</code> by default, <code>let</code> when the value must change, and avoid <code>var</code>.</p>
+<h2>Question 2: What is hoisting?</h2>
+<p>JavaScript registers declarations before running the code. This is called hoisting.</p>
+<pre><code class="language-js">console.log(a);   // undefined (var is hoisted and set to undefined)
+var a = 10;
+
+console.log(b);   // ReferenceError: Cannot access &#39;b&#39; before initialization
+let b = 10;
+</code></pre>
+<ul>
+<li><code>var</code> is hoisted and initialised to <code>undefined</code>, so reading it early gives <code>undefined</code>.</li>
+<li><code>let</code> and <code>const</code> are hoisted too, but they sit in the <strong>temporal dead zone</strong> from the start of the block until the declaration line. Reading them there throws a <code>ReferenceError</code>.</li>
+</ul>
+<h2>Question 3: Why does the notes' example print 30 (p. 36)?</h2>
+<pre><code class="language-js">function printHello() {
+  var a = 20;          // function-scoped
+  if (true) {
+    var a = 30;        // same variable, not a new one
+    console.log(a);    // 30
+  }
+  console.log(&#34;F -&gt;&#34;, a); // 30
+}
+printHello();
+</code></pre>
+<p><code>var</code> ignores block scope. The <code>var a = 30</code> inside the <code>if</code> block is the same variable as the <code>var a = 20</code> in the function, so it overwrites it. With <code>let</code>, the inner <code>a</code> would be a separate variable, and the last line would print <code>20</code>:</p>
+<pre><code class="language-js">function printHello() {
+  let a = 20;
+  if (true) {
+    let a = 30;        // new variable, only inside this block
+    console.log(a);    // 30
+  }
+  console.log(&#34;F -&gt;&#34;, a); // 20
+}
+</code></pre>
+<h2>Question 4: Can you change a <code>const</code> object or array?</h2>
+<p>Yes. <code>const</code> stops you re-assigning the variable, not changing what the object contains.</p>
+<pre><code class="language-js">const user = { name: &#39;Asha&#39; };
+user.name = &#39;Ravi&#39;;        // OK
+user.age = 30;             // OK
+console.log(user);         // { name: &#39;Ravi&#39;, age: 30 }
+
+// user = { name: &#39;New&#39; }; // TypeError: Assignment to constant variable
+
+const list = [1, 2];
+list.push(3);              // OK
+console.log(list);         // [1, 2, 3]
+</code></pre>
+<p>To make an object truly unchangeable, use <code>Object.freeze(user)</code>.</p>
+<h2>Coding task 1: Predict the output</h2>
+<pre><code class="language-js">// 1
+if (true) { var x = 1; }
+console.log(x);          // 1 (var ignores block scope)
+
+// 2
+if (true) { let y = 2; }
+console.log(y);          // ReferenceError: y is not defined
+
+// 3
+function f() { var z = 5; }
+f();
+console.log(z);          // ReferenceError (var is still function-scoped)
+
+// 4
+console.log(a);          // undefined
+var a = 10;
+
+// 5
+console.log(b);          // ReferenceError: Cannot access &#39;b&#39; before initialization
+let b = 10;
+
+// 6
+for (var i = 0; i &lt; 3; i++) {}
+console.log(i);          // 3 (var leaks out of the loop)
+// with let, console.log(i) would be a ReferenceError
+</code></pre>
+<h2>Coding task 2: Variables for a test run</h2>
+<pre><code class="language-js">const testName = &#39;Login with valid credentials&#39;; // never changes
+const browser = &#39;chromium&#39;;                      // never changes
+let retryCount = 0;                              // changes after each retry
+let isHeadless = true;                           // const works too if it never changes
+
+retryCount++;
+console.log(`${testName} on ${browser}, retries: ${retryCount}, headless: ${isHeadless}`);
+// Login with valid credentials on chromium, retries: 1, headless: true
+</code></pre>
+<h2>Coding task 3: Swap two variables, three ways</h2>
+<pre><code class="language-js">let a = 5, b = 10;
+
+// 1) Temporary variable
+let temp = a;
+a = b;
+b = temp;
+console.log(a, b);   // 10 5
+
+// 2) Arithmetic (numbers only)
+a = a + b;           // 15
+b = a - b;           // 10
+a = a - b;           // 5
+console.log(a, b);   // 5 10
+
+// 3) Destructuring (modern, works for any type)
+[a, b] = [b, a];
+console.log(a, b);   // 10 5
+</code></pre>
+<h2>Coding task 4: Valid and invalid identifiers</h2>
+<p>Rules: start with a letter, <code>_</code> or <code>$</code>; later characters can also be digits; no spaces or hyphens; no reserved keywords.</p>
+<pre><code class="language-js">// Valid
+var userName = &#39;a&#39;;
+var _id = 1;
+var $price = 99;
+var name1 = &#39;b&#39;;
+var π = 3.14;          // Unicode is allowed, but avoid it in real projects
+
+// Invalid (each causes a SyntaxError)
+// var 1name = &#39;x&#39;;    // starts with a digit
+// var my-name = &#39;x&#39;;  // hyphen is the minus operator
+// var my name = &#39;x&#39;;  // spaces not allowed
+// var class = &#39;x&#39;;    // reserved keyword
+// var user@id = &#39;x&#39;;  // special character
+</code></pre>
+<p>Identifiers are case-sensitive, so <code>NAME</code> and <code>name1</code> are different variables, as your notes show.</p>
+
+</body></html>

@@ -105,6 +105,15 @@ A chapter-by-chapter learning repo for testers moving into JavaScript, TypeScrip
   - [117: var Is Function-Scoped](#117-var-is-function-scoped)
   - [119: let Is Block-Scoped](#119-let-is-block-scoped)
   - [120: const](#120-const)
+  - [121: Hoisting: var vs let](#121-hoisting-var-vs-let)
+  - [124: var in a Block, and Redeclaring var](#124-var-in-a-block-and-redeclaring-var)
+  - [125: The Temporal Dead Zone (TDZ)](#125-the-temporal-dead-zone-tdz)
+- [Chapter 15: Closures](#chapter-15-closures)
+  - [128: Closures](#128-closures)
+- [Chapter 16: Strings](#chapter-16-strings)
+  - [129: Creating Strings and Converting to a String](#129-creating-strings-and-converting-to-a-string)
+  - [130: length, Index, at() and charAt()](#130-length-index-at-and-charat)
+  - [131: Searching Inside a String](#131-searching-inside-a-string)
 - [Coming Up](#coming-up)
 
 ---
@@ -126,8 +135,10 @@ flowchart LR
     C10 --> C11["11 do...while<br/>run once, nested loops"]:::done
     C11 --> C12["12 Arrays<br/>push/pop, find, map, sort, copy"]:::done
     C12 --> C13["13 Functions<br/>4 types, arrow, IIFE, rest, return"]:::done
-    C13 --> C14["14 var, let, const<br/>scope, hoisting, TDZ"]:::progress
-    C14 --> TS["TypeScript"]:::planned
+    C13 --> C14["14 var, let, const<br/>scope, hoisting, TDZ"]:::done
+    C14 --> C15["15 Closures<br/>functions that remember"]:::done
+    C15 --> C16["16 Strings<br/>index, length, search"]:::progress
+    C16 --> TS["TypeScript"]:::planned
     TS --> PW["Playwright"]:::planned
 
     classDef done fill:#d1fae5,stroke:#059669,color:#064e3b
@@ -155,7 +166,9 @@ flowchart LR
 | 11 | do...while and Nested Loops | [11_chapter_Loops_DoWhile](11_chapter_Loops_DoWhile/) | ✅ Done | `do...while`, `while` vs `do...while`, nested `for` loops |
 | 12 | Arrays | [12_chapters_Arrays](12_chapters_Arrays/) | ✅ Done | Index, `length`, `at()`, creating arrays, `push`/`pop`/`shift`/`unshift`/`splice`, `indexOf`/`includes`/`find`, `for...of`/`forEach`, `map`/`filter`, `sort`, `slice`, `concat` and spread, `every`/`some`, copy vs reference, destructuring |
 | 13 | Functions | [13_chapter_Functions](13_chapter_Functions/) | ✅ Done | Defining and calling, the 4 function types, expressions and arrow functions, IIFE, rest and spread, `return` |
-| 14 | var, let, const: Scope, Hoisting and TDZ | [14_chapter_Var_Let_Const_Hoisting_TDZ](14_chapter_Var_Let_Const_Hoisting_TDZ/) | 🟡 In progress | Function scope vs block scope, shadowing, `const` |
+| 14 | var, let, const: Scope, Hoisting and TDZ | [14_chapter_Var_Let_Const_Hoisting_TDZ](14_chapter_Var_Let_Const_Hoisting_TDZ/) | ✅ Done | Function scope vs block scope, shadowing, `const`, hoisting, the TDZ, `typeof` in the TDZ, redeclaring `var` |
+| 15 | Closures | [15_chapter_Functions_Closure](15_chapter_Functions_Closure/) | ✅ Done | Inner functions that remember the outer function's variables |
+| 16 | Strings | [16_chapter_String](16_chapter_String/) | 🟡 In progress | Quotes and template literals, `String()`, `length`, index, `at()`, `charAt()`, `includes`, `startsWith`, `endsWith`, `indexOf` |
 
 ---
 
@@ -302,15 +315,28 @@ LearnJSTSPlaywright4x/
 │   ├── 110_Arrow_Multiple.js               # Multi-line arrow function with if
 │   ├── 110_Fn.js                           # doubleMe as a function and as an arrow
 │   ├── 112_Fn_REAL.js                      # Status code check in all three syntaxes
-│   ├── 113_Fn.js                           # IIFE: runs as soon as it is defined
+│   ├── 113_Fn_IIFE.js                      # IIFE: runs as soon as it is defined
 │   ├── 114_Spread_As_Argument_Fn.js        # Rest parameters (...codes) and spread arguments
 │   ├── 115_Fn_Return.js                    # Several return paths: status code categories
 │   └── 116_Return_Fn.js                    # No return statement: undefined
-└── 14_chapter_Var_Let_Const_Hoisting_TDZ/
-    ├── 117.js                              # var, let and const side by side
-    ├── 118_var_let_const.js                # var is function-scoped: the if block overwrites it
-    ├── 119_let.js                          # let is block-scoped: each block keeps its own b
-    └── 120_Const.js                        # const cannot be reassigned
+├── 14_chapter_Var_Let_Const_Hoisting_TDZ/
+│   ├── 117.js                              # var, let and const side by side
+│   ├── 118_var_let_const.js                # var is function-scoped: the if block overwrites it
+│   ├── 119_let.js                          # let is block-scoped: each block keeps its own b
+│   ├── 120_Const.js                        # const cannot be reassigned
+│   ├── 121_Var_Hoisting.js                 # var is hoisted: undefined before its line
+│   ├── 122_Let_Hoisting.js                 # let used before its line: error
+│   ├── 123_Fn_Hoisting.js                  # var hoisting inside a function
+│   ├── 124_Let_TDZ.js                      # var inside an if block overwrites the outer var
+│   ├── 125_let_tds.js                      # The TDZ: ReferenceError before let's line
+│   ├── 126_Var.js                          # var can be declared again with no error
+│   └── 127_TDZ_TypeOf.js                   # typeof on an undeclared name
+├── 15_chapter_Functions_Closure/
+│   └── 128_Closure.js                      # An inner function remembers the outer variable
+└── 16_chapter_String/
+    ├── 129_String.js                       # Quotes, template literals, String()
+    ├── 130_String_Fn.js                    # length, [index], at(), charAt(), charCodeAt()
+    └── 131_String_Search.js                # includes, startsWith, endsWith, indexOf
 ```
 
 ---
@@ -3212,7 +3238,7 @@ console.log(isSuccess(200), isSuccess(300), isSuccess(404));   // true false fal
 
 **Q&A: why use this?**
 - **Q: When do I reach for it?** A: One-off setup blocks, and running async code in a plain Node script: `(async () => { await ... })();` is a common way to drive Playwright from a script outside the test runner.
-- **Q: What does it replace?** A: Defining a named function only to call it once (`function name1() { ... } name1();`, the commented code in `113_Fn.js`).
+- **Q: What does it replace?** A: Defining a named function only to call it once (`function name1() { ... } name1();`, the commented code in `113_Fn_IIFE.js`).
 - **Q: What's the gotcha?** A: Put a semicolon at the end of the line before it. `let x = 1` followed by `(() => { ... })()` on the next line is read as `1(...)` and throws `TypeError: 1 is not a function`.
 
 ```mermaid
@@ -3222,7 +3248,7 @@ flowchart LR
 ```
 
 ```js
-// 13_chapter_Functions/113_Fn.js (commented examples switched on)
+// 13_chapter_Functions/113_Fn_IIFE.js (commented examples switched on)
 function name1() {
     console.log("Hi");
 }
@@ -3442,9 +3468,351 @@ browsers.push("firefox");  // allowed: the array itself can change
 console.log(browsers);     // [ 'chrome', 'firefox' ]
 ```
 
+### 121: Hoisting: var vs let
+
+![Hoisting and the TDZ: with var, console.log(greeting) before the declaration prints undefined; with let, it throws a ReferenceError because greeting is in the TDZ until let greeting = "Hello" runs](assets/images/ch14-hoisting-tdz.png)
+
+**Concept:** Before a scope runs, JavaScript sets up every variable declared in it; that is hoisting. A `var` is set to `undefined` straight away, so using it early prints `undefined`. A `let` or `const` is created but left without a value until its line runs, so using it early throws an error.
+
+**Why:** Hoisting explains two confusing outputs: `undefined` where you expected a value, and a `ReferenceError` for a variable that clearly exists a few lines further down.
+
+**Q&A: why use this?**
+- **Q: When do I reach for it?** A: When reading older `var`-based code, and when debugging an unexpected `undefined`. Only the declaration moves up, not the assignment: `121_Var_Hoisting.js` prints `undefined`, then `Hello`.
+- **Q: What does it replace?** A: The idea that code runs strictly top to bottom with nothing prepared in advance. Java has no hoisting: using a local variable before its declaration is a compile error.
+- **Q: What's the gotcha?** A: Function declarations are hoisted whole (lesson 106), so you can call them early. A `var` inside a function is hoisted only to the top of that function: `123_Fn_Hoisting.js` prints `undefined`, then `200`.
+
+```mermaid
+flowchart TD
+    S["The scope starts"] --> V["var greeting<br/>created and set to undefined"]
+    S --> L["let greeting<br/>created, but no value yet (TDZ)"]
+    V --> V1["console.log(greeting)<br/>prints undefined"]
+    L --> L1["console.log(greeting)<br/>throws ReferenceError"]
+    V1 --> V2["greeting = 'Hello'"]
+```
+
+```js
+// 14_chapter_Var_Let_Const_Hoisting_TDZ/121_Var_Hoisting.js
+console.log(greeting);     // undefined: var greeting was hoisted
+var greeting = "Hello";
+console.log(greeting);     // Hello
+
+// Behind the scenes:
+// var greeting;            <-- hoisted with undefined
+// console.log(greeting);   <-- undefined
+// greeting = "Hello";      <-- the assignment stays where it is
+
+// 123_Fn_Hoisting.js: the same thing inside a function
+function getUserStatus() {
+    console.log(status_code);   // undefined
+    var status_code = "200";
+    console.log(status_code);   // 200
+}
+getUserStatus();
+
+// 122_Let_Hoisting.js: with let, only this order works
+let greeting2 = "Hello";        // renamed so this runs as one file
+console.log(greeting2);         // Hello
+// console.log(x); let x = 1;   ReferenceError: Cannot access 'x' before initialization
+```
+
+### 124: var in a Block, and Redeclaring var
+
+**Concept:** Two more `var` surprises. A `var` inside an `if` block is the same variable as the one outside, so it overwrites it (`124_Let_TDZ.js`). And `var` lets you declare the same name again with no error (`126_Var.js`).
+
+**Why:** In a long file, a second `var` that reuses a name silently replaces the first value, which is exactly the kind of bug that is hard to track down.
+
+**Q&A: why use this?**
+- **Q: When do I reach for it?** A: When reading older code: check whether a `var` declared inside a block also exists outside it.
+- **Q: What does it replace?** A: Nothing; `let` and `const` fix both problems. They are block-scoped, and they refuse a second declaration in the same scope (`SyntaxError: Identifier ... has already been declared`).
+- **Q: What's the gotcha?** A: Despite its name, `124_Let_TDZ.js` uses `var`, not `let`. Change the inner `var a` to `let a` and the first `console.log(a)` inside the block throws `ReferenceError: Cannot access 'a' before initialization`, because the block's own `a` is in its TDZ (lesson 125).
+
+```mermaid
+flowchart LR
+    subgraph V["var a = 'temp' inside the if"]
+        V1["outer a = 'Pramod'"] --> V2["if block: var a = 'temp'<br/>overwrites the same a"]
+        V2 --> V3["after the block:<br/>a is 'temp'"]
+    end
+    subgraph L["let a = 'temp' inside the if"]
+        L1["outer a = 'Pramod'"] --> L2["if block: console.log(a)<br/>ReferenceError (TDZ)"]
+    end
+```
+
+```js
+// 14_chapter_Var_Let_Const_Hoisting_TDZ/124_Let_TDZ.js (plus a check after the block)
+var a = "Pramod";
+// ... 10,000 lines of code ...
+if (true) {
+    console.log(a);   // Pramod
+    var a = "temp";   // the SAME a: overwrites the outer value
+    console.log(a);   // temp
+}
+console.log(a);       // temp: the change leaked out of the block
+
+// 14_chapter_Var_Let_Const_Hoisting_TDZ/126_Var.js
+var testName = "Login Test";
+var testName = "Signup Test";    // No error! Re-declaration allowed with var
+var testName = "Search Test";    // Still no error!
+console.log(testName);           // Search Test
+```
+
+### 125: The Temporal Dead Zone (TDZ)
+
+**Concept:** The temporal dead zone is the stretch from the start of a block to the line where a `let` or `const` is declared. The variable already exists there but has no value yet, so any use of it throws `ReferenceError: Cannot access 'a' before initialization`.
+
+**Why:** The error is deliberate: it catches "used before declared" bugs that `var` would hide behind a silent `undefined`.
+
+**Q&A: why use this?**
+- **Q: When do I reach for it?** A: Whenever you see that exact error message: move the declaration above the first use.
+- **Q: What does it replace?** A: `var`'s silent `undefined`. The notes in `125_let_tds.js` put it side by side: before its line, a `var` is `undefined` and a `let` has no value at all.
+- **Q: What's the gotcha?** A: `typeof` is not safe in the TDZ. For a name that was never declared, `typeof missingName` is `"undefined"` with no error (`127_TDZ_TypeOf.js`), but `typeof t` above `let t = 1` in the same block throws the same `ReferenceError`.
+
+```mermaid
+flowchart TD
+    E["Enter the block"] --> C["a is created with no value<br/>the TDZ starts"]
+    C --> U["console.log(a)<br/>ReferenceError"]:::err
+    C --> D["let a = 10<br/>the TDZ ends, a is 10"]
+    D --> OK["console.log(a)<br/>prints 10"]
+
+    classDef err fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+```
+
+| Used before its declaration line | `var x` | `let x` / `const x` | `x` never declared |
+|:---------------------------------|:--------|:--------------------|:-------------------|
+| `console.log(x)` | `undefined` | `ReferenceError` (TDZ) | `ReferenceError: x is not defined` |
+| `typeof x` | `"undefined"` | `ReferenceError` (TDZ) | `"undefined"` |
+
+```js
+// 14_chapter_Var_Let_Const_Hoisting_TDZ/125_let_tds.js (wrapped in try/catch so the file keeps running)
+{
+    try {
+        console.log(a);           // a exists, but it is in the TDZ
+    } catch (e) {
+        console.log(e.message);   // Cannot access 'a' before initialization
+    }
+    let a = 10;
+    console.log(a);               // 10: the TDZ is over
+}
+
+// 14_chapter_Var_Let_Const_Hoisting_TDZ/127_TDZ_TypeOf.js (with console.log added)
+console.log(typeof missingName);  // undefined: never declared, so no error
+
+{
+    try {
+        typeof t;                 // t is declared below, so it is in the TDZ
+    } catch (e) {
+        console.log(e.message);   // Cannot access 't' before initialization
+    }
+    let t = 1;
+}
+```
+
+---
+
+## Chapter 15: Closures
+
+### 128: Closures
+
+![Closures: functions remember. startBrowser() creates let name = "edge" and returns installBrowser; runTc carries name = "edge" in its backpack, so runTc() prints edge even after startBrowser() has finished](assets/images/ch15-closure.png)
+
+**Concept:** A closure is a function that remembers the variables from the place where it was created. `startBrowser()` returns `installBrowser`, and that inner function can still read `name` after `startBrowser()` has finished.
+
+**Why:** Closures let a function carry its own private data (a counter, a config value, a base URL) without global variables.
+
+**Q&A: why use this?**
+- **Q: When do I reach for it?** A: Function factories and private state: `makeCounter()` returns a function that counts up, and a helper like `createApiClient(baseUrl)` can return functions that all remember the same `baseUrl`.
+- **Q: What does it replace?** A: Global variables shared by several functions. In Java you would write a small class with a private field and a method.
+- **Q: What's the gotcha?** A: Each call to the outer function creates a fresh, separate set of variables, so two counters made by `makeCounter()` count independently. And the inner function sees the variable's current value, not a snapshot from the moment it was created.
+
+```mermaid
+sequenceDiagram
+    participant Caller as 128_Closure.js
+    participant SB as startBrowser()
+    participant IB as installBrowser
+    Caller->>SB: startBrowser()
+    SB->>SB: let name = "edge"
+    SB-->>Caller: return installBrowser (it remembers name)
+    Note over SB: startBrowser has finished
+    Caller->>IB: runTc()
+    IB-->>Caller: console.log(name) prints edge
+```
+
+```js
+// 15_chapter_Functions_Closure/128_Closure.js (plus a counter example)
+function startBrowser() {
+    let name = "edge";
+
+    function installBrowser() {
+        console.log(name);   // reads name from startBrowser
+    }
+
+    return installBrowser;
+}
+
+const runTc = startBrowser();   // startBrowser has finished...
+runTc();                        // ...but this still prints: edge
+
+// a closure with private state
+function makeCounter() {
+    let count = 0;
+    return () => ++count;
+}
+const c1 = makeCounter();
+const c2 = makeCounter();
+console.log(c1(), c1(), c1(), c2());   // 1 2 3 1
+```
+
+---
+
+## Chapter 16: Strings
+
+### 129: Creating Strings and Converting to a String
+
+**Concept:** A string is text in single quotes, double quotes or backticks. Backticks make a template literal, which can hold `${expressions}` and span several lines; `String(value)` turns any value into a string.
+
+**Why:** URLs, test names, log messages and expected page text are all strings, and most assertions compare strings.
+
+**Q&A: why use this?**
+- **Q: When do I reach for it?** A: Single or double quotes for fixed text (pick one style and stay with it); backticks whenever a value goes inside (`` `Test completed in ${320}ms` ``) or the text spans several lines, like a small report.
+- **Q: What does it replace?** A: Java's `"text" + value` and `String.valueOf(value)`; Java needs text blocks (`"""`) for multi-line strings.
+- **Q: What's the gotcha?** A: `String([1, 2])` is `"1,2"`, without brackets (the comment in `129_String.js` says `"[1,2]"`). And `String(null)` is `"null"`, but `null.toString()` throws a `TypeError`, so prefer `String(value)` when the value might be `null`.
+
+```mermaid
+flowchart LR
+    T["text"] --> A["single or double quotes<br/>fixed text"]
+    T --> B["backticks<br/>values inside, line breaks allowed"]
+    V["any value"] -->|"String(value)"| S["a string<br/>String(200) is '200'"]
+```
+
+| Code | Result |
+|:-----|:-------|
+| `String(200)` | `"200"` |
+| `String(true)` | `"true"` |
+| `String(null)` | `"null"` |
+| `String(undefined)` | `"undefined"` |
+| `String([1, 2])` | `"1,2"` |
+
+```js
+// 16_chapter_String/129_String.js (with console.log added)
+let url = "https://app.vwo.com";
+let status = 'pass';
+let message = `Test completed in ${320}ms`;
+console.log(message);          // Test completed in 320ms
+
+let name1 = "Alice";
+let msg = `Hello, ${name1}! 2 + 2 = ${2 + 2}`;
+console.log(msg);              // Hello, Alice! 2 + 2 = 4
+
+let report = `
+  Test: Login
+  Status: Pass
+  Duration: 320ms
+`;
+console.log(report);           // the three indented lines, with a blank line before and after
+
+console.log(String(200));      // 200
+console.log(String(true));     // true
+console.log(String(null));     // null
+console.log(String([1, 2]));   // 1,2  (no brackets)
+```
+
+### 130: length, Index, at() and charAt()
+
+![Strings: index, length and at(). In let str = "Hello", H e l l o sit at indexes 0 to 4 and -5 to -1; str.length is 5, str[0] is "H", str.at(-1) is "o"; strings can't be changed in place](assets/images/ch16-string-index.png)
+
+**Concept:** A string works like a read-only array of characters: `length` counts them, `str[0]` reads the first one (indexes start at 0), `at(-1)` reads from the end, and `charAt(i)` and `charCodeAt(i)` give the character and its character code.
+
+**Why:** Checking the first letter, the last character or the length of a field's value is common in form-validation tests.
+
+**Q&A: why use this?**
+- **Q: When do I reach for it?** A: `length` for field limits ("at most 10 characters"), `str.at(-1)` for the last character, `charCodeAt` when comparing characters by code. Lesson 91's lexicographic sort uses these codes: `"H"` is 72, `"A"` is 65, `"a"` is 97.
+- **Q: What does it replace?** A: Java's `str.length()` (a method there, a property here) and `str.charAt(i)`.
+- **Q: What's the gotcha?** A: Strings cannot be changed in place: `str[0] = "J"` is silently ignored, and methods like `toUpperCase()` return a new string. Out of range, `"abc"[5]` is `undefined` while `"abc".charAt(5)` is an empty string `""`. And `\n` counts as one character in `length`.
+
+```mermaid
+flowchart LR
+    subgraph STR["str = 'Hello', length 5"]
+        C0["[0] H<br/>at(-5)"] --- C1["[1] e<br/>at(-4)"] --- C2["[2] l<br/>at(-3)"] --- C3["[3] l<br/>at(-2)"] --- C4["[4] o<br/>at(-1)"]
+    end
+```
+
+| On `"Hello, World!"` | Result |
+|:---------------------|:-------|
+| `str.length` | `13` |
+| `str[0]` | `"H"` |
+| `str[7]` | `"W"` |
+| `str.at(-1)` | `"!"` |
+| `str.at(-6)` | `"W"` |
+| `str.charAt(0)` | `"H"` |
+| `str.charCodeAt(0)` | `72` |
+
+```js
+// 16_chapter_String/130_String_Fn.js (with console.log added)
+let str = "Hello, World!";
+console.log(str.length);          // 13 (counts from 1)
+console.log(str[0]);              // H  (indexes start at 0)
+console.log(str[7]);              // W
+console.log(str.at(-1));          // !
+console.log(str.at(-6));          // W
+console.log(str.charAt(0));       // H
+console.log(str.charCodeAt(0));   // 72
+
+let s = "Hello";
+s[0] = "J";                       // ignored: strings can't be changed in place
+console.log(s);                   // Hello
+console.log(s.toUpperCase(), s);  // HELLO Hello  (a new string; s is unchanged)
+```
+
+### 131: Searching Inside a String
+
+**Concept:** `includes` answers "is this text anywhere in the string?", `startsWith` and `endsWith` check the two ends, and `indexOf` and `lastIndexOf` give the position of the first and last match, or `-1`.
+
+**Why:** URL and text checks are everywhere in UI tests: is this the staging URL, does the message start with "Error", does the link end in `.pdf`?
+
+**Q&A: why use this?**
+- **Q: When do I reach for it?** A: `url.includes("staging")` to check the environment, `url.startsWith("https")` for secure links, `fileName.endsWith(".pdf")` for downloads, and `indexOf` when you need a position to cut the string at. Playwright assertions such as `toHaveURL()` and `toContainText()` run the same kind of check against the page.
+- **Q: What does it replace?** A: Java's `contains`, `startsWith`, `endsWith` and `indexOf`; only `contains` has a different name (`includes`).
+- **Q: What's the gotcha?** A: Every one of them is case-sensitive: `url.includes("STAGING")` is `false`, so lowercase first (`url.toLowerCase().includes("staging")`). And as with arrays, never use `indexOf` as a yes/no test: a match at position 0 is falsy and a miss (`-1`) is truthy; use `includes`.
+
+```mermaid
+flowchart TD
+    Q{"What do you need?"} -->|"yes or no, anywhere"| I["includes(text)"]
+    Q -->|"check the start or the end"| SE["startsWith / endsWith"]
+    Q -->|"the position"| X["indexOf / lastIndexOf<br/>-1 when missing"]
+```
+
+| On `"https://staging.vwo.com/api/login?retry=true"` | Result |
+|:----------------------------------------------------|:-------|
+| `url.includes("staging")` | `true` |
+| `url.includes("production")` | `false` |
+| `url.startsWith("https")` | `true` |
+| `url.startsWith("http://")` | `false` |
+| `url.endsWith("true")` | `true` |
+| `url.indexOf("a")` | `10` |
+| `url.lastIndexOf("a")` | `24` |
+| `url.indexOf("nothere")` | `-1` |
+
+```js
+// 16_chapter_String/131_String_Search.js (with console.log added)
+let url = "https://staging.vwo.com/api/login?retry=true";
+
+console.log(url.includes("staging"));       // true
+console.log(url.includes("production"));    // false
+
+console.log(url.startsWith("https"));       // true
+console.log(url.startsWith("http://"));     // false
+console.log(url.endsWith("true"));          // true
+
+console.log(url.indexOf("a"));              // 10
+console.log(url.lastIndexOf("a"));          // 24
+console.log(url.indexOf("nothere"));        // -1
+
+console.log(url.includes("STAGING"));                 // false: case-sensitive
+console.log(url.toLowerCase().includes("staging"));   // true
+```
+
 ---
 
 ## Coming Up
 
-- **Chapter 14: var, let, const** continues with hoisting and the temporal dead zone (TDZ).
+- **Chapter 16: Strings** continues.
 - Then TypeScript, then Playwright.

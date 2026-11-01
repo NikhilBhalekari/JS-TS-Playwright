@@ -4,6 +4,7 @@
   "description": "![Learn JavaScript, TypeScript & Playwright: chapter by chapter, built for testers](assets/images/banner.png)",
   "maclin": "index.js",
   "scripts": {
+    "prime-number": "tsc --target ES2020 --outDir dist JSTasks/01_javascript_numerical_problems/02_PrimeNumber.ts && node dist/02_PrimeNumber.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,5 +19,8 @@
   "homepage": "https://github.com/PramodDutta/LearnJSTSPlaywright4x#readme",
   "dependencies": {
     "prompt-sync": "^4.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
   }
 }
